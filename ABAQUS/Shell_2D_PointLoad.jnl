@@ -1,0 +1,1341 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=2.0)
+mdb.models['Model-1'].sketches['__profile__'].ConstructionLine(point1=(0.0, 
+    -1.0), point2=(0.0, 1.0))
+mdb.models['Model-1'].sketches['__profile__'].FixedConstraint(entity=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[2])
+mdb.models['Model-1'].sketches['__profile__'].ConstructionLine(point1=(0.0, 
+    1.0), point2=(0.0, -0.003947913646698))
+mdb.models['Model-1'].sketches['__profile__'].VerticalConstraint(addUndoState=
+    False, entity=mdb.models['Model-1'].sketches['__profile__'].geometry[3])
+mdb.models['Model-1'].sketches['__profile__'].undo()
+mdb.models['Model-1'].sketches['__profile__'].undo()
+mdb.models['Model-1'].sketches['__profile__'].undo()
+mdb.models['Model-1'].sketches['__profile__'].Line(point1=(0.5, 1.0), point2=(
+    0.5, 0.0))
+mdb.models['Model-1'].sketches['__profile__'].VerticalConstraint(addUndoState=
+    False, entity=mdb.models['Model-1'].sketches['__profile__'].geometry[2])
+mdb.models['Model-1'].sketches['__profile__'].ConstructionLine(point1=(0.0, 
+    0.0), point2=(0.0, 1.0))
+mdb.models['Model-1'].sketches['__profile__'].VerticalConstraint(addUndoState=
+    False, entity=mdb.models['Model-1'].sketches['__profile__'].geometry[3])
+mdb.models['Model-1'].Part(dimensionality=THREE_D, name='Part-1', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['Part-1'].BaseShellRevolve(angle=360.0, 
+    flipRevolveDirection=OFF, sketch=
+    mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+mdb.models['Model-1'].Material(name='Shell')
+mdb.models['Model-1'].materials['Shell'].Elastic(table=((10920000000.0, 0.3), 
+    ))
+mdb.models['Model-1'].HomogeneousShellSection(idealization=NO_IDEALIZATION, 
+    integrationRule=SIMPSON, material='Shell', name='Shell_Section', 
+    nodalThicknessField='', numIntPts=5, poissonDefinition=DEFAULT, 
+    preIntegrate=OFF, temperature=GRADIENT, thickness=0.01, thicknessField='', 
+    thicknessModulus=None, thicknessType=UNIFORM, useDensity=OFF)
+mdb.models['Model-1'].parts['Part-1'].Set(faces=
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#1 ]', 
+    ), ), name='Set-1')
+mdb.models['Model-1'].parts['Part-1'].SectionAssignment(offset=0.0, 
+    offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['Model-1'].parts['Part-1'].sets['Set-1'], sectionName=
+    'Shell_Section', thicknessAssignment=FROM_SECTION)
+mdb.models['Model-1'].rootAssembly.DatumCsysByDefault(CARTESIAN)
+mdb.models['Model-1'].rootAssembly.Instance(dependent=ON, name='Part-1-1', 
+    part=mdb.models['Model-1'].parts['Part-1'])
+mdb.models['Model-1'].parts['Part-1'].sets.changeKey(fromName='Set-1', toName=
+    'Cylindrical_Shell')
+mdb.models['Model-1'].rootAssembly.regenerate()
+mdb.models['Model-1'].StaticStep(name='Load_Step', previous='Initial')
+mdb.models['Model-1'].rootAssembly.DatumPointByCoordinate(coords=(0.5, 0.5, 
+    0.0))
+mdb.models['Model-1'].parts['Part-1'].seedPart(deviationFactor=0.1, 
+    minSizeFactor=0.1, size=0.02)
+mdb.models['Model-1'].parts['Part-1'].setMeshControls(algorithm=MEDIAL_AXIS, 
+    elemShape=QUAD, regions=
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#1 ]', 
+    ), ))
+mdb.models['Model-1'].parts['Part-1'].generateMesh()
+mdb.models['Model-1'].rootAssembly.regenerate()
+mdb.models['Model-1'].rootAssembly.Set(name='Set-1', nodes=
+    mdb.models['Model-1'].rootAssembly.instances['Part-1-1'].nodes.getSequenceFromMask(
+    mask=('[#0:5 #100 ]', ), ))
+mdb.models['Model-1'].ConcentratedForce(cf1=-5.0, createStepName='Load_Step', 
+    distributionType=UNIFORM, field='', localCsys=None, name='Load-1', region=
+    mdb.models['Model-1'].rootAssembly.sets['Set-1'])
+mdb.models['Model-1'].rootAssembly.Set(edges=
+    mdb.models['Model-1'].rootAssembly.instances['Part-1-1'].edges.getSequenceFromMask(
+    ('[#4 ]', ), ), name='Set-2')
+mdb.models['Model-1'].DisplacementBC(amplitude=UNSET, createStepName=
+    'Load_Step', distributionType=UNIFORM, fieldName='', fixed=OFF, localCsys=
+    None, name='End1', region=mdb.models['Model-1'].rootAssembly.sets['Set-2'], 
+    u1=0.0, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.models['Model-1'].rootAssembly.Set(edges=
+    mdb.models['Model-1'].rootAssembly.instances['Part-1-1'].edges.getSequenceFromMask(
+    ('[#2 ]', ), ), name='Set-3')
+mdb.models['Model-1'].DisplacementBC(amplitude=UNSET, createStepName=
+    'Load_Step', distributionType=UNIFORM, fieldName='', fixed=OFF, localCsys=
+    None, name='BC-2', region=mdb.models['Model-1'].rootAssembly.sets['Set-3'], 
+    u1=0.0, u2=UNSET, u3=0.0, ur1=UNSET, ur2=UNSET, ur3=UNSET)
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Model-1', modelPrint=OFF, 
+    multiprocessingMode=DEFAULT, name='Job-1', nodalOutputPrecision=SINGLE, 
+    numCpus=1, numGPUs=0, numThreadsPerMpiProcess=1, queue=None, resultsFormat=
+    ODB, scratch='', type=ANALYSIS, userSubroutine='', waitHours=0, 
+    waitMinutes=0)
+mdb.models.changeKey(fromName='Model-1', toName='Cylindical_2D_Shell')
+del mdb.jobs['Job-1']
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Cylindical_2D_Shell', modelPrint=
+    OFF, multiprocessingMode=DEFAULT, name='Job-1', nodalOutputPrecision=SINGLE
+    , numCpus=1, numGPUs=0, numThreadsPerMpiProcess=1, queue=None, 
+    resultsFormat=ODB, scratch='', type=ANALYSIS, userSubroutine='', waitHours=
+    0, waitMinutes=0)
+mdb.models['Cylindical_2D_Shell'].parts['Part-1'].Set(faces=
+    mdb.models['Cylindical_2D_Shell'].parts['Part-1'].faces.getSequenceFromMask(
+    ('[#1 ]', ), ), name='Set-3')
+mdb.models['Cylindical_2D_Shell'].parts['Part-1'].SectionAssignment(offset=0.0, 
+    offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['Cylindical_2D_Shell'].parts['Part-1'].sets['Set-3'], 
+    sectionName='Shell_Section', thicknessAssignment=FROM_SECTION)
+mdb.models['Cylindical_2D_Shell'].rootAssembly.regenerate()
+del mdb.jobs['Job-1']
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Cylindical_2D_Shell', modelPrint=
+    OFF, multiprocessingMode=DEFAULT, name='Job-1', nodalOutputPrecision=SINGLE
+    , numCpus=1, numGPUs=0, numThreadsPerMpiProcess=1, queue=None, 
+    resultsFormat=ODB, scratch='', type=ANALYSIS, userSubroutine='', waitHours=
+    0, waitMinutes=0)
+mdb.jobs['Job-1'].submit(consistencyChecking=OFF)
+mdb.jobs['Job-1']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'jobName': 'Job-1', 'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Job-1']._Message(ODB_FILE, {'file': 'C:\\temp\\Job-1.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(COMPLETED, {'message': 'Analysis phase complete', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(STARTED, {'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1', 'clientHost': 'Nilesh', 'handle': 39868})
+mdb.jobs['Job-1']._Message(STEP, {'stepId': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(ODB_FRAME, {'step': 0, 'frame': 0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(MEMORY_ESTIMATE, {'memory': 153.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(PHYSICAL_MEMORY, {'physical_memory': 15677.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(MINIMUM_MEMORY, {'minimum_memory': 28.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 2 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(ODB_FRAME, {'step': 0, 'frame': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(STATUS, {'step': 1, 'increment': 1, 'attempts': 1, 
+    'severe': 0, 'equilibrium': 1, 'iterations': 1, 'totalTime': 1.0, 
+    'stepTime': 1.0, 'timeIncrement': 1.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(END_STEP, {'stepId': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(COMPLETED, {'message': 'Analysis phase complete', 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(JOB_COMPLETED, {'time': 'Mon Jun 23 16:31:10 2025', 
+    'jobName': 'Job-1'})
+# Save by niles on 2025_06_23-16.48.15; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell'].materials['Shell'].elastic.setValues(table=((
+    10920000.0, 0.3), ))
+# Save by niles on 2025_06_23-16.54.12; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.jobs['Job-1'].submit(consistencyChecking=OFF)
+mdb.jobs['Job-1']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'jobName': 'Job-1', 'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Job-1']._Message(ODB_FILE, {'file': 'C:\\temp\\Job-1.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(COMPLETED, {'message': 'Analysis phase complete', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(STARTED, {'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1', 'clientHost': 'Nilesh', 'handle': 35608})
+mdb.jobs['Job-1']._Message(STEP, {'stepId': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(ODB_FRAME, {'step': 0, 'frame': 0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(MEMORY_ESTIMATE, {'memory': 153.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(PHYSICAL_MEMORY, {'physical_memory': 15677.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(MINIMUM_MEMORY, {'minimum_memory': 28.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 2 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(ODB_FRAME, {'step': 0, 'frame': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(STATUS, {'step': 1, 'increment': 1, 'attempts': 1, 
+    'severe': 0, 'equilibrium': 1, 'iterations': 1, 'totalTime': 1.0, 
+    'stepTime': 1.0, 'timeIncrement': 1.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(END_STEP, {'stepId': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(COMPLETED, {'message': 'Analysis phase complete', 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(JOB_COMPLETED, {'time': 'Mon Jun 23 16:54:45 2025', 
+    'jobName': 'Job-1'})
+# Save by niles on 2025_06_23-16.55.15; build 2024 2023_09_21-18.25.25 RELr426 190762
+# Save by niles on 2025_06_23-17.00.08; build 2024 2023_09_21-18.25.25 RELr426 190762
+# Save by niles on 2025_06_23-17.00.08; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models.changeKey(fromName='Cylindical_2D_Shell', toName=
+    'Cylindical_2D_Shell_PointLoad')
+mdb.Model(name='Cylindical_2D_Shell_UDLLoad-Copy', objectToCopy=
+    mdb.models['Cylindical_2D_Shell_PointLoad'])
+del mdb.models['Cylindical_2D_Shell_UDLLoad-Copy'].loads['Load-1']
+mdb.models['Cylindical_2D_Shell_UDLLoad-Copy'].rootAssembly.DatumPlaneByPrincipalPlane(
+    offset=0.0, principalPlane=XZPLANE)
+mdb.models['Cylindical_2D_Shell_UDLLoad-Copy'].rootAssembly.DatumPlaneByPrincipalPlane(
+    offset=1.0, principalPlane=XZPLANE)
+mdb.models['Cylindical_2D_Shell_UDLLoad-Copy'].rootAssembly.DatumPlaneByPrincipalPlane(
+    offset=0.5, principalPlane=YZPLANE)
+mdb.models['Cylindical_2D_Shell_UDLLoad-Copy'].rootAssembly.DatumPlaneByPrincipalPlane(
+    offset=0.433, principalPlane=YZPLANE)
+mdb.Model(name='Cylindical_3D_Shell_PointLoad', objectToCopy=
+    mdb.models['Cylindical_2D_Shell_PointLoad'])
+mdb.models['Cylindical_3D_Shell_PointLoad'].ConstrainedSketch(name='__edit__', 
+    objectToCopy=
+    mdb.models['Cylindical_3D_Shell_PointLoad'].parts['Part-1'].features['Shell revolve-1'].sketch)
+mdb.models['Cylindical_3D_Shell_PointLoad'].parts['Part-1'].projectReferencesOntoSketch(
+    filter=COPLANAR_EDGES, sketch=
+    mdb.models['Cylindical_3D_Shell_PointLoad'].sketches['__edit__'], 
+    upToFeature=
+    mdb.models['Cylindical_3D_Shell_PointLoad'].parts['Part-1'].features['Shell revolve-1'])
+del mdb.models['Cylindical_3D_Shell_PointLoad'].sketches['__edit__']
+del mdb.models['Cylindical_3D_Shell_PointLoad'].parts['Part-1'].sectionAssignments[1]
+del mdb.models['Cylindical_3D_Shell_PointLoad'].parts['Part-1'].sectionAssignments[0]
+mdb.models['Cylindical_3D_Shell_PointLoad'].HomogeneousShellSection(
+    idealization=NO_IDEALIZATION, integrationRule=SIMPSON, material='Shell', 
+    name='Shell_section1', nodalThicknessField='', numIntPts=5, 
+    poissonDefinition=DEFAULT, preIntegrate=OFF, temperature=GRADIENT, 
+    thickness=0.1, thicknessField='', thicknessModulus=None, thicknessType=
+    UNIFORM, useDensity=OFF)
+mdb.models['Cylindical_3D_Shell_PointLoad'].parts['Part-1'].SectionAssignment(
+    offset=0.0, offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['Cylindical_3D_Shell_PointLoad'].parts['Part-1'].sets['Cylindrical_Shell']
+    , sectionName='Shell_section1', thicknessAssignment=FROM_SECTION)
+mdb.models['Cylindical_3D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Cylindical_3D_Shell_PointLoad', 
+    modelPrint=OFF, multiprocessingMode=DEFAULT, name='Job-2', 
+    nodalOutputPrecision=SINGLE, numCpus=1, numGPUs=0, numThreadsPerMpiProcess=
+    1, queue=None, resultsFormat=ODB, scratch='', type=ANALYSIS, 
+    userSubroutine='', waitHours=0, waitMinutes=0)
+mdb.jobs['Job-2'].submit(consistencyChecking=OFF)
+mdb.jobs['Job-2']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'jobName': 'Job-2', 'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Job-2']._Message(ODB_FILE, {
+    'file': 'C:\\Users\\niles\\Desktop\\Internship\\ML Model\\Abaqus\\Job-2.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(COMPLETED, {'message': 'Analysis phase complete', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(STARTED, {'phase': STANDARD_PHASE, 
+    'jobName': 'Job-2', 'clientHost': 'Nilesh', 'handle': 35316})
+mdb.jobs['Job-2']._Message(STEP, {'stepId': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(ODB_FRAME, {'step': 0, 'frame': 0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(MEMORY_ESTIMATE, {'memory': 153.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(PHYSICAL_MEMORY, {'physical_memory': 15677.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(MINIMUM_MEMORY, {'minimum_memory': 28.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 2 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(ODB_FRAME, {'step': 0, 'frame': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(STATUS, {'step': 1, 'increment': 1, 'attempts': 1, 
+    'severe': 0, 'equilibrium': 1, 'iterations': 1, 'totalTime': 1.0, 
+    'stepTime': 1.0, 'timeIncrement': 1.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(END_STEP, {'stepId': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(COMPLETED, {'message': 'Analysis phase complete', 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-2'})
+mdb.jobs['Job-2']._Message(JOB_COMPLETED, {'time': 'Mon Jun 23 19:48:28 2025', 
+    'jobName': 'Job-2'})
+del mdb.models['Cylindical_3D_Shell_PointLoad']
+del mdb.models['Cylindical_2D_Shell_UDLLoad-Copy']
+del mdb.jobs['Job-2']
+del mdb.jobs['Job-1']
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Cylindical_2D_Shell_PointLoad', 
+    modelPrint=OFF, multiprocessingMode=DEFAULT, name='Job-1', 
+    nodalOutputPrecision=SINGLE, numCpus=1, numGPUs=0, numThreadsPerMpiProcess=
+    1, queue=None, resultsFormat=ODB, scratch='', type=ANALYSIS, 
+    userSubroutine='', waitHours=0, waitMinutes=0)
+mdb.jobs['Job-1'].submit(consistencyChecking=OFF)
+mdb.jobs['Job-1']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'jobName': 'Job-1', 'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Job-1']._Message(ODB_FILE, {
+    'file': 'C:\\Users\\niles\\Desktop\\Internship\\ML Model\\Abaqus\\Job-1.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(COMPLETED, {'message': 'Analysis phase complete', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(STARTED, {'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1', 'clientHost': 'Nilesh', 'handle': 31488})
+mdb.jobs['Job-1']._Message(STEP, {'stepId': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(ODB_FRAME, {'step': 0, 'frame': 0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(MEMORY_ESTIMATE, {'memory': 153.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(PHYSICAL_MEMORY, {'physical_memory': 15677.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(MINIMUM_MEMORY, {'minimum_memory': 28.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 2 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(ODB_FRAME, {'step': 0, 'frame': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(STATUS, {'step': 1, 'increment': 1, 'attempts': 1, 
+    'severe': 0, 'equilibrium': 1, 'iterations': 1, 'totalTime': 1.0, 
+    'stepTime': 1.0, 'timeIncrement': 1.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(END_STEP, {'stepId': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(COMPLETED, {'message': 'Analysis phase complete', 
+    'phase': STANDARD_PHASE, 'jobName': 'Job-1'})
+mdb.jobs['Job-1']._Message(JOB_COMPLETED, {'time': 'Mon Jun 23 19:54:23 2025', 
+    'jobName': 'Job-1'})
+# Save by niles on 2025_06_23-19.55.14; build 2024 2023_09_21-18.25.25 RELr426 190762
+# Save by niles on 2025_06_23-19.55.33; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+del mdb.jobs['Job-1']
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Cylindical_2D_Shell_PointLoad', 
+    modelPrint=OFF, multiprocessingMode=DEFAULT, name='Job-1', 
+    nodalOutputPrecision=SINGLE, numCpus=1, numGPUs=0, numThreadsPerMpiProcess=
+    1, queue=None, resultsFormat=ODB, scratch='', type=ANALYSIS, 
+    userSubroutine='', waitHours=0, waitMinutes=0)
+mdb.jobs.changeKey(fromName='Job-1', toName='Cylindrical_2D_Shell_PointLoad')
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\Users\\niles\\Desktop\\Internship\\ML Model\\Abaqus\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 5628})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 153.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 28.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 2 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Mon Jun 23 19:58:56 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+# Save by niles on 2025_06_23-19.59.23; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\temp\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 22924})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 153.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 28.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 2 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Tue Jun 24 11:22:12 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+# Save by niles on 2025_06_24-11.36.51; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell_PointLoad'].boundaryConditions['BC-2'].setValues(
+    u1=UNSET)
+mdb.models['Cylindical_2D_Shell_PointLoad'].boundaryConditions['End1'].setValues(
+    u1=UNSET, u2=0.0, u3=UNSET)
+mdb.models['Cylindical_2D_Shell_PointLoad'].boundaryConditions['BC-2'].setValues(
+    u2=0.0, u3=UNSET)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\temp\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 31500})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 153.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 28.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': ' 1U', 'severe': 0, 'equilibrium': 4, 
+    'iterations': 4, 'totalTime': 0.0, 'stepTime': 0.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': ' 2U', 'severe': 0, 'equilibrium': 4, 
+    'iterations': 4, 'totalTime': 0.0, 'stepTime': 0.0, 'timeIncrement': 0.25, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': ' 3U', 'severe': 0, 'equilibrium': 4, 
+    'iterations': 4, 'totalTime': 0.0, 'stepTime': 0.0, 
+    'timeIncrement': 0.0625, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': ' 4U', 'severe': 0, 'equilibrium': 4, 
+    'iterations': 4, 'totalTime': 0.0, 'stepTime': 0.0, 
+    'timeIncrement': 0.015625, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 1 ratio = 100.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': ' 5U', 'severe': 0, 'equilibrium': 4, 
+    'iterations': 4, 'totalTime': 0.0, 'stepTime': 0.0, 
+    'timeIncrement': 0.00390625, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'Too many attempts made for this increment', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ABORTED, {
+    'message': 'Analysis phase failed due to errors', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'Abaqus/Standard Analysis exited with an error - Please see the  message file for possible error messages if the file exists.', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_ABORTED, {
+    'message': 'Abaqus/Standard Analysis exited with an error - Please see the  message file for possible error messages if the file exists.', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.models['Cylindical_2D_Shell_PointLoad'].boundaryConditions['BC-2'].setValues(
+    u1=0.0)
+mdb.models['Cylindical_2D_Shell_PointLoad'].boundaryConditions['End1'].setValues(
+    u1=0.0)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\temp\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 38884})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 153.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 28.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.73 D.O.F. 3 ratio = 10.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Tue Jun 24 16:02:27 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].setElementType(
+    elemTypes=(ElemType(elemCode=S4R, elemLibrary=STANDARD, 
+    secondOrderAccuracy=OFF, hourglassControl=DEFAULT), ElemType(elemCode=S3, 
+    elemLibrary=STANDARD)), regions=(
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].faces.getSequenceFromMask(
+    ('[#1 ]', ), ), ))
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].deleteMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].seedPart(
+    deviationFactor=0.1, minSizeFactor=0.1, size=0.005)
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].generateMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\temp\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 16704})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 2637.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 343.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.262 D.O.F. 3 ratio = 100.E+09     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Tue Jun 24 16:05:09 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].deleteMesh(regions=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].faces.getSequenceFromMask(
+    ('[#1 ]', ), ))
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].DatumPointByCoordinate(
+    coords=(0.5, 0.5, 0.0))
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].DatumPointByMidPoint(
+    point1=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].vertices[1], 
+    point2=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].vertices[0])
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].DatumPointByMidPoint(
+    point1=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].vertices[1], 
+    point2=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].vertices[0])
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].DatumPointByMidPoint(
+    isDependent=False, point1=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].vertices[1], 
+    point2=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].vertices[0])
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].DatumPointByMidPoint(
+    isDependent=False, point1=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].InterestingPoint(
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].edges[1], 
+    MIDDLE), point2=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].InterestingPoint(
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].edges[2], 
+    MIDDLE))
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+# Save by niles on 2025_06_24-16.29.04; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].generateMesh()
+# Save by niles on 2025_06_24-16.32.35; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+# Save by niles on 2025_06_24-16.50.07; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].DatumPointByOffset(
+    isDependent=False, point=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].vertices[0], 
+    vector=(0.0, 0.5, 0.0))
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.DatumPointByCoordinate(
+    coords=(0.0, 0.0, 0.0))
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.DatumPointByCoordinate(
+    coords=(0.0, 0.0, 0.0))
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.DatumPointByOffset(
+    point=mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.datums[9], 
+    vector=(0.5, 0.5, 0.0))
+mdb.models['Cylindical_2D_Shell_PointLoad'].ConstrainedSketch(name='__edit__', 
+    objectToCopy=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].features['Shell revolve-1'].sketch)
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].projectReferencesOntoSketch(
+    filter=COPLANAR_EDGES, sketch=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].sketches['__edit__'], 
+    upToFeature=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].features['Shell revolve-1'])
+del mdb.models['Cylindical_2D_Shell_PointLoad'].sketches['__edit__']
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].deleteMesh(regions=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].faces.getSequenceFromMask(
+    ('[#1 ]', ), ))
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].DatumPlaneByPrincipalPlane(
+    offset=0.5, principalPlane=XZPLANE)
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].PartitionFaceByDatumPlane(
+    datumPlane=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].datums[14], 
+    faces=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].faces.getSequenceFromMask(
+    ('[#1 ]', ), ))
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.Set(name='Point_Load', 
+    vertices=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.instances['Part-1-1'].vertices.getSequenceFromMask(
+    ('[#1 ]', ), ))
+mdb.models['Cylindical_2D_Shell_PointLoad'].loads['Load-1'].setValues(
+    distributionType=UNIFORM, field='', region=
+    mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.sets['Point_Load'])
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Cylindical_2D_Shell_PointLoad', 
+    modelPrint=OFF, multiprocessingMode=DEFAULT, name='Job-2', 
+    nodalOutputPrecision=SINGLE, numCpus=1, numGPUs=0, numThreadsPerMpiProcess=
+    1, queue=None, resultsFormat=ODB, scratch='', type=ANALYSIS, 
+    userSubroutine='', waitHours=0, waitMinutes=0)
+del mdb.jobs['Job-2']
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'in keyword *BOUNDARY, file "Cylindrical_2D_Shell_PointLoad.inp", line 37: Unknown assembly node set SET-3', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'in keyword *BOUNDARY, file "Cylindrical_2D_Shell_PointLoad.inp", line 37: Unknown assembly node set SET-3', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'in keyword *BOUNDARY, file "Cylindrical_2D_Shell_PointLoad.inp", line 41: Unknown assembly node set SET-2', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'in keyword *BOUNDARY, file "Cylindrical_2D_Shell_PointLoad.inp", line 41: Unknown assembly node set SET-2', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'in keyword *CLOAD, file "Cylindrical_2D_Shell_PointLoad.inp", line 48: Unknown assembly set POINT_LOAD', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'THIS MODEL HAS EITHER INCORRECT OR NO ELEMENT DEFINITIONS.', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ABORTED, {
+    'message': 'Analysis phase failed due to errors', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ERROR, {
+    'message': 'Analysis Input File Processor exited with an error - Please see the  Cylindrical_2D_Shell_PointLoad.dat file for possible error messages if the file exists.', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_ABORTED, {
+    'message': 'Analysis Input File Processor exited with an error - Please see the  Cylindrical_2D_Shell_PointLoad.dat file for possible error messages if the file exists.', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].generateMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\temp\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 32932})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 2699.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 343.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.31 D.O.F. 3 ratio = 1.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Wed Jun 25 11:27:32 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.models['Cylindical_2D_Shell_PointLoad'].boundaryConditions['BC-2'].move(
+    'Load_Step', 'Initial')
+mdb.models['Cylindical_2D_Shell_PointLoad'].boundaryConditions['End1'].move(
+    'Load_Step', 'Initial')
+# Save by niles on 2025_06_25-11.38.30; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].setElementType(
+    elemTypes=(ElemType(elemCode=S8R, elemLibrary=STANDARD), ElemType(
+    elemCode=STRI65, elemLibrary=STANDARD)), regions=(
+    mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].faces.getSequenceFromMask(
+    ('[#3 ]', ), ), ))
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].deleteMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].seedPart(
+    deviationFactor=0.1, minSizeFactor=0.1, size=0.01)
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].generateMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\Users\\niles\\Desktop\\Internship\\ML Model\\Abaqus\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 19336})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 2422.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 378.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.5 D.O.F. 3 ratio = 1.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Mon Jun 30 17:21:17 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+# Save by niles on 2025_06_30-17.23.10; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].generateMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\Users\\niles\\Desktop\\Internship\\ML Model\\Abaqus\\Shell_3D_PointLoad\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 154528})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 2422.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 378.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.5 D.O.F. 3 ratio = 1.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Tue Jul  1 15:38:34 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].deleteMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].seedPart(
+    deviationFactor=0.1, minSizeFactor=0.1, size=0.005)
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].generateMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\Users\\niles\\Desktop\\Internship\\ML Model\\Abaqus\\Shell_3D_PointLoad\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 157284})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 10879.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 1500.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.48 D.O.F. 3 ratio = 1.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Tue Jul  1 15:45:00 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].deleteMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].seedPart(
+    deviationFactor=0.1, minSizeFactor=0.1, size=0.004)
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].generateMesh()
+# Save by niles on 2025_07_01-15.47.27; build 2024 2023_09_21-18.25.25 RELr426 190762
+# Save by niles on 2025_07_01-15.47.31; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].regenerate()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+# Save by niles on 2025_07_01-15.48.43; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\Users\\niles\\Desktop\\Internship\\ML Model\\Abaqus\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 174008})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 14109.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 2337.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.7 D.O.F. 3 ratio = 1.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Tue Jul  1 15:59:54 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+# Save by niles on 2025_07_01-17.54.29; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].deleteMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].seedPart(
+    deviationFactor=0.1, minSizeFactor=0.1, size=0.01)
+mdb.models['Cylindical_2D_Shell_PointLoad'].parts['Part-1'].generateMesh()
+mdb.models['Cylindical_2D_Shell_PointLoad'].rootAssembly.regenerate()
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+# Save by niles on 2025_07_08-21.05.33; build 2024 2023_09_21-18.25.25 RELr426 190762
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.jobs['Cylindrical_2D_Shell_PointLoad'].submit(consistencyChecking=OFF)
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 0})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FILE, {
+    'file': 'C:\\Users\\niles\\Desktop\\Internship\\ML Model\\Abaqus\\Cylindrical_2D_Shell_PointLoad.odb', 
+    'phase': BATCHPRE_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': BATCHPRE_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STARTED, {
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad', 
+    'clientHost': 'Nilesh', 'handle': 78600})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MEMORY_ESTIMATE, {
+    'memory': 2422.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(PHYSICAL_MEMORY, {
+    'physical_memory': 15677.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(MINIMUM_MEMORY, {
+    'minimum_memory': 378.0, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(WARNING, {
+    'message': 'Solver problem. Numerical singularity when processing node PART-1-1.5 D.O.F. 3 ratio = 1.E+12     .', 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(ODB_FRAME, {'step': 0, 
+    'frame': 1, 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(STATUS, {'step': 1, 
+    'increment': 1, 'attempts': 1, 'severe': 0, 'equilibrium': 1, 
+    'iterations': 1, 'totalTime': 1.0, 'stepTime': 1.0, 'timeIncrement': 1.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(END_STEP, {'stepId': 1, 
+    'phase': STANDARD_PHASE, 'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(COMPLETED, {
+    'message': 'Analysis phase complete', 'phase': STANDARD_PHASE, 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+mdb.jobs['Cylindrical_2D_Shell_PointLoad']._Message(JOB_COMPLETED, {
+    'time': 'Tue Jul  8 21:07:58 2025', 
+    'jobName': 'Cylindrical_2D_Shell_PointLoad'})
+# Save by niles on 2025_07_08-21.10.17; build 2024 2023_09_21-18.25.25 RELr426 190762
